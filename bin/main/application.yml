@@ -1,0 +1,10 @@
+server:
+  servlet:
+    context-path: /novaMock
+spring:
+  application:
+      name: novaMockService
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: https://suresh-nova-eureka-server.herokuapp.com/eureka
