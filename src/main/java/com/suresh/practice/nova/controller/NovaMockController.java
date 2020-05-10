@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.suresh.practice.nova.dto.ProductCatalogDto;
 import com.suresh.practice.nova.dto.ProductPriceDto;
 import com.suresh.practice.nova.exception.NovaMockServiceException;
 import com.suresh.practice.nova.service.NovaMockService;
@@ -34,6 +35,21 @@ public class NovaMockController {
 		
 		long timeElapsed = System.nanoTime() - startTime;
 		responseObject.put("results", priceResults);
+		responseObject.put("executionTime", timeElapsed / 1000000 + " milliseconds");
+		
+		return new ResponseEntity<>(responseObject, HttpStatus.OK);
+	}
+	
+	@GetMapping(value="/catalog/{productId}", produces=MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> catalogForProduct(@PathVariable Long productId) throws NovaMockServiceException {
+		Map<String, Object> responseObject = new HashMap<>(1);
+		
+		long startTime = System.nanoTime();
+		
+		List<ProductCatalogDto> catalogResults = novaMockService.getCatalogForProduct(productId);	
+		
+		long timeElapsed = System.nanoTime() - startTime;
+		responseObject.put("results", catalogResults);
 		responseObject.put("executionTime", timeElapsed / 1000000 + " milliseconds");
 		
 		return new ResponseEntity<>(responseObject, HttpStatus.OK);

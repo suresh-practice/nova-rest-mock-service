@@ -2,12 +2,16 @@ package com.suresh.practice.nova.service.impl;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.stereotype.Service;
 
+import com.suresh.practice.nova.dto.ProductCatalogDto;
 import com.suresh.practice.nova.dto.ProductPriceDto;
+import com.suresh.practice.nova.enums.ProductCatalogConstants;
+import com.suresh.practice.nova.enums.ProductNames;
 import com.suresh.practice.nova.exception.NovaMockServiceException;
 import com.suresh.practice.nova.service.NovaMockService;
 
@@ -37,9 +41,58 @@ public class NovaMockServiceImpl implements NovaMockService {
 
 	private void preGetPriceForProduct(Long productId) throws NovaMockServiceException {
 		
+		checkValidProductId(productId);
+	}
+
+	private void checkValidProductId(Long productId) throws NovaMockServiceException {
 		if (productId <= 0) {
 			throw new NovaMockServiceException("Invalid product id!");
 		}
 	}
 
+	@Override
+	public List<ProductCatalogDto> getCatalogForProduct(Long productId) throws NovaMockServiceException {
+		preGetCatalogForProduct(productId);
+		
+		return doGetCatalogForProduct(productId);
+	}
+
+	private List<ProductCatalogDto> doGetCatalogForProduct(Long productId) {
+		
+		List<ProductCatalogDto> catalogList = new ArrayList<>(1);
+		
+		ProductCatalogDto catalogDto = generateProductCatalog(productId);
+		
+		catalogList.add(catalogDto);
+		
+		return catalogList;
+	}
+
+	private ProductCatalogDto generateProductCatalog(Long productId) {
+		ProductCatalogDto catalogDto = new ProductCatalogDto();
+		
+		catalogDto.setProductId(productId);
+		catalogDto.setProductDescription(generateRandomString());
+		catalogDto.setProductCategory(ProductCatalogConstants._CATEGORY_);
+		
+		int pdtLength = ProductNames.values().length;
+		int pdtIndex = ThreadLocalRandom.current().nextInt(0, pdtLength-1);
+		catalogDto.setProductName(Arrays.asList(ProductNames.values()).get(pdtIndex).name());
+		
+		return catalogDto;
+	}
+
+	private void preGetCatalogForProduct(Long productId) throws NovaMockServiceException {
+		checkValidProductId(productId);
+	}
+
+	private String generateRandomString() {
+		
+		int arrayLength = ProductCatalogConstants._CATALOG_DESC_.length;
+		
+		int rand = ThreadLocalRandom.current().nextInt(0, arrayLength-1);
+	    
+		return ProductCatalogConstants._CATALOG_DESC_[rand];
+	    
+	}
 }
